@@ -199,17 +199,17 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <h1>⚡ Market Euphoria Monitor</h1>
-  <div class="meta">Updated: 13 June 2026 &nbsp;|&nbsp; gustavholtzhausen.github.io/euphoria-dashboard &nbsp;|&nbsp; Data coverage: 50%</div>
+  <div class="meta">Updated: 13 June 2026 &nbsp;|&nbsp; gustavholtzhausen.github.io/euphoria-dashboard &nbsp;|&nbsp; Data coverage: 43%</div>
 </div>
 
 <div class="main">
 
 <!-- 1. SIGNAL BANNER -->
-<div class="signal-banner" style="background:#f9731618; border-color:#f97316; color:#f97316;">
-  <div class="signal-emoji">🟠</div>
+<div class="signal-banner" style="background:#ef444418; border-color:#ef4444; color:#ef4444;">
+  <div class="signal-emoji">🔴</div>
   <div style="flex:1;">
-    <div class="signal-label">HOLD</div>
-    <div class="signal-posture" style="color:#f97316cc;">Maintain positions — no new capital; watch for direction</div>
+    <div class="signal-label">REDUCE</div>
+    <div class="signal-posture" style="color:#ef4444cc;">Trim on strength — raise cash reserve above baseline</div>
     <!-- Collapsible signal reference inside banner -->
     <div class="sig-ref-toggle" onclick="toggleSigRef()" id="sig-ref-btn">
       Signal Reference <span class="sig-ref-arrow" id="sig-ref-arrow">▼</span>
@@ -246,12 +246,12 @@
       <text x="14"  y="130" font-size="8" fill="#22c55e" font-family="Arial">0</text>
       <text x="98"  y="22"  font-size="8" fill="#eab308" font-family="Arial" text-anchor="middle">50</text>
       <text x="200" y="130" font-size="8" fill="#ef4444" font-family="Arial" text-anchor="end">100</text>
-      <line x1="110" y1="115" x2="105.1" y2="40.2" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="110" cy="115" r="5" fill="#f97316"/>
-      <text x="110" y="100" font-size="28" font-weight="bold" fill="#f97316" font-family="Arial" text-anchor="middle">48</text>
+      <line x1="110" y1="115" x2="136.5" y2="44.8" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="110" cy="115" r="5" fill="#ef4444"/>
+      <text x="110" y="100" font-size="28" font-weight="bold" fill="#ef4444" font-family="Arial" text-anchor="middle">62</text>
     </svg>
-    <div class="gauge-label">/100 — HOLD</div>
-    <div class="vs-mean">vs your 1-month avg of <strong>47.9</strong>: <span style="color:#22c55e;">+0.0 pts</span></div>
+    <div class="gauge-label">/100 — REDUCE</div>
+    <div class="vs-mean">vs your 1-month avg of <strong>61.5</strong>: <span style="color:#22c55e;">+0.0 pts</span></div>
   </div>
 
   <div class="breakdown-card">
@@ -263,15 +263,15 @@
         <div class="mc-score" style="color:#9ca3af;">–</div>
         <div class="mc-raw"><span style="color:#64748b;">–</span></div>
       </div>
-      <div class="mini-card" style="border-left-color:#eab308;">
-        <div class="mc-name">CAPE (P/E10)</div>
-        <div class="mc-score" style="color:#eab308;">5.1</div>
-        <div class="mc-raw"><span style="color:#94a3b8;">17.4×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#eab308; font-weight:700;">Fair</span></div>
-      </div>
       <div class="mini-card" style="border-left-color:#ef4444;">
+        <div class="mc-name">CAPE (P/E10)</div>
+        <div class="mc-score" style="color:#ef4444;">9.5</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">41.4×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#eab308;">
         <div class="mc-name">TTM P/E</div>
-        <div class="mc-score" style="color:#ef4444;">10.0</div>
-        <div class="mc-raw"><span style="color:#94a3b8;">500.0×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
+        <div class="mc-score" style="color:#eab308;">4.6</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">16.2×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#eab308; font-weight:700;">Fair</span></div>
       </div>
       <div class="mini-card" style="border-left-color:#eab308;">
         <div class="mc-name">Price-to-Sales</div>
@@ -283,10 +283,10 @@
         <div class="mc-score" style="color:#9ca3af;">–</div>
         <div class="mc-raw"><span style="color:#64748b;">–</span></div>
       </div>
-      <div class="mini-card" style="border-left-color:#22c55e;">
+      <div class="mini-card" style="border-left-color:#9ca3af;">
         <div class="mc-name">Margin Debt (YoY%)</div>
-        <div class="mc-score" style="color:#22c55e;">1.3</div>
-        <div class="mc-raw"><span style="color:#94a3b8;">-22.2%</span><span style="color:#64748b;"> · Avg: 0% · </span><span style="color:#22c55e; font-weight:700;">Contracting</span></div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
       </div>
       <div class="mini-card" style="border-left-color:#9ca3af;">
         <div class="mc-name">Household Equity Allocation</div>
@@ -308,10 +308,10 @@
         <div class="mc-score" style="color:#22c55e;">3.4</div>
         <div class="mc-raw"><span style="color:#94a3b8;">34/100</span><span style="color:#64748b;"> · Avg: 50 · </span><span style="color:#22c55e; font-weight:700;">Fear</span></div>
       </div>
-      <div class="mini-card" style="border-left-color:#9ca3af;">
+      <div class="mini-card" style="border-left-color:#eab308;">
         <div class="mc-name">Insider Sell:Buy Ratio</div>
-        <div class="mc-score" style="color:#9ca3af;">–</div>
-        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+        <div class="mc-score" style="color:#eab308;">5.0</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">1.0×</span><span style="color:#64748b;"> · Avg: 1.0× · </span><span style="color:#eab308; font-weight:700;">Normal</span></div>
       </div>
     </div>
   </div>
@@ -368,7 +368,7 @@
   <div class="collapsible-header" onclick="toggleTable()" id="ind-toggle-header">
     <h2>Euphoria Indicators — Scored &amp; Weighted</h2>
     <div class="right">
-      <span class="coverage-badge">Weight coverage: 50% &nbsp;·&nbsp; Hover indicator name for definition</span>
+      <span class="coverage-badge">Weight coverage: 43% &nbsp;·&nbsp; Hover indicator name for definition</span>
       <span class="collapse-arrow" id="collapse-arrow">▼</span>
     </div>
   </div>
@@ -416,7 +416,7 @@
           <td class="ind-source" title="FRED · Monthly · ~30 day lag">–</td>
         </tr>
         
-        <tr style="background:#fefce8;">
+        <tr style="background:#fef2f2;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">Shiller CAPE (P/E10)</span>
@@ -425,21 +425,21 @@
             
           </td>
           <td class="ind-weight">12%</td>
-          <td class="ind-value-cell"><span class="val-main">17.4×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#eab308;">Fair</span></td>
+          <td class="ind-value-cell"><span class="val-main">41.4×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#ef4444;">Extreme</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:50%; background:#eab308;"></div>
+              <div class="bar-fill" style="width:95%; background:#ef4444;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#eab308; font-weight:700;">5.1</td>
+          <td class="ind-score" style="color:#ef4444; font-weight:700;">9.5</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
+            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
           </td>
           <td class="ind-spark"></td>
           <td class="ind-source" title="multpl.com (Shiller PE) · Monthly · Near real-time">2026-06-13</td>
         </tr>
         
-        <tr style="background:#fef2f2;">
+        <tr style="background:#fefce8;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">S&P 500 TTM P/E</span>
@@ -448,15 +448,15 @@
             
           </td>
           <td class="ind-weight">7%</td>
-          <td class="ind-value-cell"><span class="val-main">500.0×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#ef4444;">Extreme</span></td>
+          <td class="ind-value-cell"><span class="val-main">16.2×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#eab308;">Fair</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:100%; background:#ef4444;"></div>
+              <div class="bar-fill" style="width:45%; background:#eab308;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#ef4444; font-weight:700;">10.0</td>
+          <td class="ind-score" style="color:#eab308; font-weight:700;">4.6</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
+            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
           </td>
           <td class="ind-spark"></td>
           <td class="ind-source" title="multpl.com (S&P 500 PE TTM) · Monthly · Near real-time">2026-06-13</td>
@@ -508,27 +508,27 @@
           <td class="ind-source" title="Calculated · Daily · Near real-time">–</td>
         </tr>
         
-        <tr style="background:#f0fdf4;">
+        <tr style="background:#f9fafb;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">FINRA Margin Debt (YoY%)</span>
               <span class="tooltip-box">Year-on-year percentage change in total margin debt (debit balances in margin accounts) as reported by FINRA. Rising margin debt signals increasing leverage and speculative appetite. Rapid YoY increases of ≥30% have historically preceded corrections. Published monthly with ~45-day lag. Negative readings indicate deleveraging.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈0% YoY</span><span><strong>Bubble threshold:</strong> ≥+30% YoY</span><span><strong>Historic high:</strong> ≈+75% YoY (early 2021)</span><span><strong>Data cadence:</strong> Monthly · ~45 day lag</span></div></span>
             </span>
-            
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
           </td>
           <td class="ind-weight">12%</td>
-          <td class="ind-value-cell"><span class="val-main">-22.2%</span> <span class="val-avg">Avg: 0%</span> <span class="val-ctx" style="color:#22c55e;">Contracting</span></td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:12%; background:#22c55e;"></div>
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#22c55e; font-weight:700;">1.3</td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#22c55e20; color:#22c55e; border:1px solid #22c55e40;">LOW</span>
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
           </td>
           <td class="ind-spark"></td>
-          <td class="ind-source" title="FINRA Margin Statistics (YoY % change in debit balances) · Monthly · ~45 day lag">1997-01</td>
+          <td class="ind-source" title="FINRA · Monthly · ~45 day lag">–</td>
         </tr>
         
         <tr style="background:#f9fafb;">
@@ -620,30 +620,30 @@
             <span class="status-pill" style="background:#22c55e20; color:#22c55e; border:1px solid #22c55e40;">LOW</span>
           </td>
           <td class="ind-spark"></td>
-          <td class="ind-source" title="CNN Fear & Greed Index (dataviz API) · Daily · Real-time">2026-06-12</td>
+          <td class="ind-source" title="CNN Fear & Greed (dataviz API) · Daily · Real-time">2026-06-12</td>
         </tr>
         
-        <tr style="background:#f9fafb;">
+        <tr style="background:#fefce8;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">Insider Sell:Buy Ratio</span>
               <span class="tooltip-box">Ratio of insider sell transactions to insider buy transactions over the prior 30 days, sourced from SEC Form 4 filings via OpenInsider.com. Insiders — directors, officers, and 10%+ shareholders — must file within 2 business days of any trade. Heavy selling relative to buying signals that those with the best information view their stock as expensive. >3× = elevated selling. >5× = extreme.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈1× (balanced)</span><span><strong>Bubble threshold:</strong> ≥3× (heavy insider selling)</span><span><strong>Historic high:</strong> ≥10× (near market peaks)</span><span><strong>Data cadence:</strong> Rolling 30 days · ~2 week lag</span></div></span>
             </span>
-            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+            
           </td>
           <td class="ind-weight">5%</td>
-          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-value-cell"><span class="val-main">1.0×</span> <span class="val-avg">Avg: 1.0×</span> <span class="val-ctx" style="color:#eab308;">Normal</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+              <div class="bar-fill" style="width:50%; background:#eab308;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-score" style="color:#eab308; font-weight:700;">5.0</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
           </td>
           <td class="ind-spark"></td>
-          <td class="ind-source" title="OpenInsider · Rolling 30 days · ~2 week lag">–</td>
+          <td class="ind-source" title="OpenInsider.com (Form 4, 30d sell:buy) · Rolling 30 days · ~2 week lag">2026-06-13</td>
         </tr>
         
       </tbody>
