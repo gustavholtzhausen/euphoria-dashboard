@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Euphoria Monitor</title>
+<style>
+  :root {
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273449;
+    --border:#334155; --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  /* ── Top bar ── */
+  .topbar{ background:var(--surface); border-bottom:1px solid var(--border); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar h1{ font-size:18px; font-weight:700; letter-spacing:.03em; color:var(--accent); }
+  .topbar .meta{ font-size:12px; color:var(--muted); }
+
+  .main{ max-width:1340px; margin:0 auto; padding:24px 24px 48px; }
+
+  /* ── Signal banner ── */
+  .signal-banner{ border-radius:10px; padding:18px 28px; margin-bottom:20px; display:flex; align-items:center; gap:20px; border:2px solid; }
+  .signal-emoji{ font-size:36px; }
+  .signal-label{ font-size:28px; font-weight:800; letter-spacing:.05em; }
+  .signal-posture{ font-size:14px; color:var(--muted); margin-top:2px; }
+
+  /* ── Top grid: gauge + mini cards ── */
+  .top-grid{ display:grid; grid-template-columns:280px 1fr; gap:20px; margin-bottom:20px; }
+
+  .gauge-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; display:flex; flex-direction:column; align-items:center; }
+  .gauge-title{ font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:12px; }
+  .gauge-svg{ width:220px; height:130px; }
+  .gauge-label{ font-size:11px; color:var(--muted); text-align:center; margin-top:2px; }
+  .vs-mean{ font-size:12px; color:var(--muted); margin-top:10px; text-align:center; }
+  .vs-mean strong{ color:var(--text); }
+
+  .breakdown-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 20px; }
+  .breakdown-title{ font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:12px; }
+  .mini-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .mini-card{ background:var(--surface2); border-radius:8px; padding:10px 12px; border-left:3px solid; }
+  .mini-card .mc-name{ font-size:10px; color:var(--muted); margin-bottom:4px; }
+  .mini-card .mc-score{ font-size:20px; font-weight:700; }
+  .mini-card .mc-raw{ font-size:10px; color:var(--muted); margin-top:2px; line-height:1.5; word-break:break-word; }
+
+  /* ── Generic section card ── */
+  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:20px; overflow:hidden; }
+  .section-header{ padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .section-header h2{ font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+  .coverage-badge{ font-size:11px; color:var(--muted); background:var(--surface2); padding:3px 10px; border-radius:20px; }
+
+  /* ── Collapsible indicator table ── */
+  .collapsible-header{
+    padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer; user-select:none;
+    border-bottom:1px solid var(--border);
+    transition:background .15s;
+  }
+  .collapsible-header:hover{ background:var(--surface2); }
+  .collapsible-header h2{ font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+  .collapsible-header .right{ display:flex; align-items:center; gap:12px; }
+  .collapse-arrow{
+    width:22px; height:22px; border-radius:50%; background:var(--surface2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:var(--muted); transition:transform .25s;
+    border:1px solid var(--border);
+  }
+  .collapse-arrow.open{ transform:rotate(180deg); }
+  .collapsible-body{ display:none; }
+  .collapsible-body.open{ display:block; }
+
+  /* ── Tables ── */
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  thead th{
+    background:var(--surface2); padding:10px 14px;
+    font-size:10px; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--muted); font-weight:600; text-align:left;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr{ border-bottom:1px solid #1e293b22; }
+  td{ padding:10px 14px; color:#1e293b; }
+
+  .ind-name{ min-width:190px; }
+  .ind-weight{ width:48px; text-align:center; color:#64748b; font-size:11px; }
+  .ind-value-cell{ min-width:220px; }
+  .val-main{ font-weight:700; font-size:13px; color:#1e293b; }
+  .val-avg{ font-size:11px; color:#64748b; margin-left:6px; }
+  .val-ctx{ font-size:11px; font-weight:700; margin-left:4px; }
+  .ind-bar{ width:100px; }
+  .ind-score{ width:48px; text-align:center; font-size:15px; }
+  .ind-status{ width:96px; }
+  .ind-spark{ width:88px; }
+  .ind-source{ width:96px; font-size:10px; color:#64748b; }
+
+  /* ── Indicator name + tooltip ── */
+  .ind-label{
+    font-weight:600; font-size:13px; cursor:help;
+    border-bottom:1px dashed #94a3b888; color:#1e293b;
+  }
+  .tooltip-wrap{ position:relative; display:inline-block; }
+
+  /* V2.1 FIX: high-contrast tooltip */
+  .tooltip-box{
+    display:none;
+    position:absolute;
+    left:0; top:110%;
+    z-index:9999;
+    background:#0f172a;
+    color:#f1f5f9;
+    border:1px solid #475569;
+    border-radius:8px;
+    padding:14px 16px;
+    width:380px;
+    font-size:13px;
+    font-weight:400;
+    line-height:1.6;
+    box-shadow:0 12px 40px rgba(0,0,0,.7);
+    pointer-events:none;
+  }
+  .tooltip-box strong{ color:#f8fafc; font-weight:700; }
+  .tooltip-box--lei{ width:340px; }
+  .tooltip-wrap:hover .tooltip-box,
+  .tooltip-wrap:focus-within .tooltip-box{ display:block; }
+
+  .tip-anchors{
+    margin-top:10px; padding-top:10px; border-top:1px solid #334155;
+    display:flex; flex-direction:column; gap:4px;
+    font-size:12px; color:#94a3b8;
+  }
+  .tip-anchors strong{ color:#cbd5e1; }
+
+  /* ── Bars ── */
+  .bar-track{ background:#e2e8f022; border-radius:4px; height:8px; width:100%; }
+  .bar-fill{ height:8px; border-radius:4px; }
+
+  /* ── Status pill ── */
+  .status-pill{
+    display:inline-block; padding:2px 8px; border-radius:20px;
+    font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  }
+
+  /* ── Stale badge ── */
+  .stale-badge{
+    display:inline-block; background:#fef08a; color:#92400e;
+    font-size:9px; font-weight:700; padding:1px 5px;
+    border-radius:3px; margin-left:6px; vertical-align:middle;
+  }
+
+  /* ── LEI section ── */
+  .lei-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px 24px; margin-bottom:20px; }
+  .lei-header{ display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .lei-badge{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; background:#1e3a5f; color:#7dd3fc; padding:3px 10px; border-radius:20px; }
+  .lei-title{ font-size:13px; font-weight:600; color:var(--text); cursor:help; border-bottom:1px dashed #475569; }
+  .lei-metrics{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .lei-metric{ background:var(--surface2); border-radius:8px; padding:12px 14px; }
+  .lm-label{ font-size:10px; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.06em; }
+  .lm-value{ font-size:18px; font-weight:700; }
+  .lei-note{ margin-top:12px; font-size:11px; color:var(--muted); font-style:italic; }
+
+  /* ── Date col tooltip (on TH) ── */
+  .th-tip{ position:relative; display:inline-block; cursor:help; border-bottom:1px dashed #475569; }
+  .th-tip .tooltip-box{ top:130%; left:-20px; width:360px; font-weight:400; }
+
+  /* ── Scale legend ── */
+  .scale-legend{ display:flex; gap:16px; align-items:center; font-size:10px; color:var(--muted); padding:8px 20px; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .scale-item{ display:flex; align-items:center; gap:5px; }
+  .scale-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  /* ── Signal reference panel (inside signal banner) ── */
+  .sig-ref-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:10px;
+    font-size:11px; font-weight:600; cursor:pointer;
+    padding:4px 12px; border-radius:5px;
+    border:1px solid currentColor;
+    background:rgba(255,255,255,0.06); user-select:none;
+    transition:background .15s;
+    opacity:0.85;
+  }
+  .sig-ref-toggle:hover{ background:rgba(255,255,255,0.14); opacity:1; }
+  .sig-ref-arrow{ display:inline-block; transition:transform .25s; font-size:9px; }
+  .sig-ref-arrow.open{ transform:rotate(180deg); }
+  .sig-ref-body{ display:none; margin-top:10px; }
+  .sig-ref-body.open{ display:block; }
+  .sig-ref-table{ border-collapse:collapse; font-size:12px; }
+  .sig-ref-table tr{ border-bottom:1px solid rgba(255,255,255,0.08); }
+  .sig-ref-table tr:last-child{ border-bottom:none; }
+  .sr-range{ padding:5px 10px 5px 0; color:rgba(255,255,255,0.5); white-space:nowrap; width:48px; }
+  .sr-signal{ padding:5px 12px 5px 0; font-weight:700; white-space:nowrap; }
+  .sr-posture{ padding:5px 0; color:rgba(255,255,255,0.6); font-size:11px; line-height:1.4; }
+
+  /* ── Footer ── */
+  .footer{ text-align:center; font-size:11px; color:var(--muted); padding:20px; border-top:1px solid var(--border); margin-top:8px; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <h1>⚡ Market Euphoria Monitor</h1>
+  <div class="meta">Updated: 13 June 2026 &nbsp;|&nbsp; gustavholtzhausen.github.io/euphoria-dashboard &nbsp;|&nbsp; Data coverage: 42%</div>
+</div>
+
+<div class="main">
+
+<!-- 1. SIGNAL BANNER -->
+<div class="signal-banner" style="background:#84cc1618; border-color:#84cc16; color:#84cc16;">
+  <div class="signal-emoji">🟡</div>
+  <div style="flex:1;">
+    <div class="signal-label">ACCUMULATE</div>
+    <div class="signal-posture" style="color:#84cc16cc;">Cautious entry — partial deployment acceptable</div>
+    <!-- Collapsible signal reference inside banner -->
+    <div class="sig-ref-toggle" onclick="toggleSigRef()" id="sig-ref-btn">
+      Signal Reference <span class="sig-ref-arrow" id="sig-ref-arrow">▼</span>
+    </div>
+    <div class="sig-ref-body" id="sig-ref-body">
+      <table class="sig-ref-table">
+        <tbody>
+          <tr><td class="sr-range">0–25</td><td class="sr-signal" style="color:#22c55e;">🟢 DEPLOY</td><td class="sr-posture">Aggressive deployment — full cash tiers activated</td></tr>
+          <tr><td class="sr-range">26–40</td><td class="sr-signal" style="color:#84cc16;">🟡 ACCUMULATE</td><td class="sr-posture">Cautious entry — partial deployment acceptable</td></tr>
+          <tr><td class="sr-range">41–60</td><td class="sr-signal" style="color:#f97316;">🟠 HOLD</td><td class="sr-posture">Maintain positions — no new capital</td></tr>
+          <tr><td class="sr-range">61–75</td><td class="sr-signal" style="color:#ef4444;">🔴 REDUCE</td><td class="sr-posture">Trim on strength — raise cash reserve</td></tr>
+          <tr><td class="sr-range">76–100</td><td class="sr-signal" style="color:#f87171;">⛔ EXTREME RISK</td><td class="sr-posture">Structural bubble conditions — consider hedging</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 2. GAUGE + MINI CARDS (always visible) -->
+<div class="top-grid">
+  <div class="gauge-card">
+    <div class="gauge-title">Composite Euphoria Score</div>
+    <svg class="gauge-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#22c55e"/>
+          <stop offset="40%" stop-color="#eab308"/>
+          <stop offset="70%" stop-color="#f97316"/>
+          <stop offset="100%" stop-color="#ef4444"/>
+        </linearGradient>
+      </defs>
+      <path d="M 20 115 A 90 90 0 0 1 200 115" fill="none" stroke="#334155" stroke-width="16" stroke-linecap="round"/>
+      <path d="M 20 115 A 90 90 0 0 1 200 115" fill="none" stroke="url(#gg)" stroke-width="16" stroke-linecap="round" opacity=".85"/>
+      <text x="14"  y="130" font-size="8" fill="#22c55e" font-family="Arial">0</text>
+      <text x="98"  y="22"  font-size="8" fill="#eab308" font-family="Arial" text-anchor="middle">50</text>
+      <text x="200" y="130" font-size="8" fill="#ef4444" font-family="Arial" text-anchor="end">100</text>
+      <line x1="110" y1="115" x2="83.9" y2="44.7" stroke="#84cc16" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="110" cy="115" r="5" fill="#84cc16"/>
+      <text x="110" y="100" font-size="28" font-weight="bold" fill="#84cc16" font-family="Arial" text-anchor="middle">39</text>
+    </svg>
+    <div class="gauge-label">/100 — ACCUMULATE</div>
+    <div class="vs-mean">vs your 1-month avg of <strong>38.7</strong>: <span style="color:#22c55e;">+0.0 pts</span></div>
+  </div>
+
+  <div class="breakdown-card">
+    <div class="breakdown-title">Indicator Scores &nbsp;·&nbsp; 0 = Deep Value &nbsp;&nbsp; 10 = Extreme Euphoria</div>
+    <div class="mini-grid">
+
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">Buffett Indicator</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">CAPE (P/E10)</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">TTM P/E</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">Price-to-Sales</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">Excess CAPE Yield (ECY)</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#22c55e;">
+        <div class="mc-name">Margin Debt (YoY%)</div>
+        <div class="mc-score" style="color:#22c55e;">1.3</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">-22.2%</span><span style="color:#64748b;"> · Avg: 0% · </span><span style="color:#22c55e; font-weight:700;">Contracting</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#eab308;">
+        <div class="mc-name">Household Equity Allocation</div>
+        <div class="mc-score" style="color:#eab308;">5.2</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">45.8%</span><span style="color:#64748b;"> · Avg: 45% · </span><span style="color:#eab308; font-weight:700;">Normal</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#9ca3af;">
+        <div class="mc-name">NFCI</div>
+        <div class="mc-score" style="color:#9ca3af;">–</div>
+        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#f97316;">
+        <div class="mc-name">VIX (Volatility Index)</div>
+        <div class="mc-score" style="color:#f97316;">6.2</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">17.7</span><span style="color:#64748b;"> · Avg: 20 · </span><span style="color:#eab308; font-weight:700;">Calm</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#22c55e;">
+        <div class="mc-name">Fear & Greed Index</div>
+        <div class="mc-score" style="color:#22c55e;">3.4</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">34/100</span><span style="color:#64748b;"> · Avg: 50 · </span><span style="color:#22c55e; font-weight:700;">Fear</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#eab308;">
+        <div class="mc-name">Insider Sell:Buy Ratio</div>
+        <div class="mc-score" style="color:#eab308;">5.0</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">1.0×</span><span style="color:#64748b;"> · Avg: 1.0× · </span><span style="color:#eab308; font-weight:700;">Normal</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. MACRO CONTEXT (LEI) — above indicator table -->
+<div class="lei-card">
+  <div class="lei-header">
+    <span class="lei-badge">Macro Context</span>
+    <span class="tooltip-wrap">
+      <span class="lei-title">Conference Board Leading Economic Index (LEI)</span>
+      <span class="tooltip-box tooltip-box--lei" style="width:400px;">A composite of 10 forward-looking economic indicators designed to signal turning points in the US business cycle approximately 7 months in advance. Components include: average manufacturing hours, initial jobless claims, ISM new orders, building permits, S&P 500, interest rate spread, and consumer expectations. This indicator measures recession risk and economic direction — not market valuation. It is presented here as macroeconomic context alongside the euphoria composite, not as part of the composite score itself.</span>
+    </span>
+    <span style="font-size:11px; color:var(--muted);">— Not included in composite score</span>
+    
+  </div>
+  <div class="lei-metrics">
+    <div class="lei-metric">
+      <span class="tooltip-wrap">
+        <span class="lm-label" style="cursor:help; border-bottom:1px dashed #475569; display:inline-block; margin-bottom:4px;">Direction</span>
+        <span class="tooltip-box tooltip-box--lei"><strong>Direction</strong> tells you whether the economy is currently expanding or contracting based on the most recent month's LEI reading.<br><br><strong>Expanding</strong> = the composite of 10 leading indicators moved higher — economic momentum is positive.<br><strong>Contracting</strong> = the composite declined — forward economic conditions are deteriorating.<br><br>Note: A single month's direction can be noisy. The 6-month trend is a more reliable signal.</span>
+      </span>
+      <div class="lm-value" style="color:#22c55e;">Expanding</div>
+    </div>
+    <div class="lei-metric">
+      <span class="tooltip-wrap">
+        <span class="lm-label" style="cursor:help; border-bottom:1px dashed #475569; display:inline-block; margin-bottom:4px;">MoM Change</span>
+        <span class="tooltip-box tooltip-box--lei"><strong>Month-on-Month (MoM) Change</strong> is the percentage change in the LEI index level from the prior month.<br><br><strong>Positive</strong> = conditions improved vs last month.<br><strong>Negative</strong> = conditions worsened vs last month.<br><br>A single negative reading is not alarming. The Conference Board considers the trend significant when MoM is negative for 3+ consecutive months, or when the 6-month annualised rate falls below −4%.</span>
+      </span>
+      <div class="lm-value" style="color:#22c55e;">+9.554%</div>
+    </div>
+    <div class="lei-metric">
+      <span class="tooltip-wrap">
+        <span class="lm-label" style="cursor:help; border-bottom:1px dashed #475569; display:inline-block; margin-bottom:4px;">6-Month Change</span>
+        <span class="tooltip-box tooltip-box--lei"><strong>6-Month Change</strong> is the cumulative percentage change in the LEI over the last 6 months.<br><br>This is the Conference Board's primary signal for recession risk:<br>• <strong>Positive</strong> = expansion; low near-term recession risk.<br>• <strong>Negative (−1% to −3%)</strong> = caution; slowdown likely.<br>• <strong>Negative (below −4% annualised)</strong> = elevated recession risk within 6–9 months.<br><br>Historically, a 6-month decline below −4% annualised has preceded every US recession.</span>
+      </span>
+      <div class="lm-value">+30.30%</div>
+    </div>
+    <div class="lei-metric">
+      <span class="tooltip-wrap">
+        <span class="lm-label" style="cursor:help; border-bottom:1px dashed #475569; display:inline-block; margin-bottom:4px;">Index Level</span>
+        <span class="tooltip-box tooltip-box--lei"><strong>Index Level</strong> is the current value of the LEI composite index, benchmarked to 100 at the year 2016.<br><br>The absolute level matters less than the direction and rate of change. However, a level that is declining toward or below the benchmark (100) alongside negative momentum is historically associated with late-cycle conditions.<br><br>Current level context: above 100 = above 2016 baseline; below 100 = below baseline.</span>
+      </span>
+      <div class="lm-value">1.7</div>
+    </div>
+  </div>
+  <div class="lei-note">
+    Anticipates US business cycle turning points ~7 months ahead. Negative 6-month trend = elevated recession risk — which can amplify any valuation correction. &nbsp;As of: 2020-02-01
+  </div>
+</div>
+
+<!-- 4. INDICATOR TABLE (collapsible — defaults CLOSED) -->
+<div class="section-card">
+  <div class="collapsible-header" onclick="toggleTable()" id="ind-toggle-header">
+    <h2>Euphoria Indicators — Scored &amp; Weighted</h2>
+    <div class="right">
+      <span class="coverage-badge">Weight coverage: 42% &nbsp;·&nbsp; Hover indicator name for definition</span>
+      <span class="collapse-arrow" id="collapse-arrow">▼</span>
+    </div>
+  </div>
+  <div class="collapsible-body" id="ind-table-body">
+    <table>
+      <thead>
+        <tr>
+          <th>Indicator</th>
+          <th>Wt</th>
+          <th>Value &nbsp;·&nbsp; Context</th>
+          <th>Score Bar (0–10)</th>
+          <th>Score</th>
+          <th>Status</th>
+          <th>Trend</th>
+          <th>
+            <span class="th-tip">
+              As of (latest available)
+              <span class="tooltip-box">Dates shown are the publication date of the most recently available data — not the date this dashboard was generated.<br><br>Publication lags by indicator:<br>• <strong>Real-time / daily</strong>: VIX, CNN Fear &amp; Greed<br>• <strong>Weekly (~7 days)</strong>: Chicago Fed NFCI<br>• <strong>Monthly (~30–45 days)</strong>: Buffett, CAPE, TTM P/E, P/S, ECY, Margin Debt<br>• <strong>Quarterly (~75 days)</strong>: Household Equity Allocation (Fed Z.1 Flow of Funds)<br><br>Stale badges indicate the live fetch failed and the last known value is being carried forward.</span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Buffett Indicator</span>
+              <span class="tooltip-box">Total US stock market capitalisation (Wilshire 5000) divided by US GDP, expressed as a percentage. Warren Buffett's preferred macro valuation metric. ≈100% = fair value. ≥180% = significantly overvalued. ≥200% = extreme. All-time high: ~226% (Dec 2021).<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ~100%</span><span><strong>Bubble threshold:</strong> ≥180%</span><span><strong>Historic high:</strong> ~226% (Dec 2021)</span><span><strong>Data cadence:</strong> Monthly · ~30 day lag</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">15%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="FRED · Monthly · ~30 day lag">–</td>
+        </tr>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Shiller CAPE (P/E10)</span>
+              <span class="tooltip-box">Cyclically Adjusted Price-to-Earnings ratio. Current S&P 500 price divided by the 10-year average of real (inflation-adjusted) earnings. Smooths out business-cycle distortions. Long-run median ≈17. ≥30 = significantly overvalued. ≥40 = extreme. All-time high: 44.2 (Dec 1999).<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈17×</span><span><strong>Bubble threshold:</strong> ≥30×</span><span><strong>Historic high:</strong> 44.2× (Dec 1999)</span><span><strong>Data cadence:</strong> Monthly · Near real-time</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">12%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="multpl.com · Monthly · Near real-time">–</td>
+        </tr>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">S&P 500 TTM P/E</span>
+              <span class="tooltip-box">Trailing twelve-month price-to-earnings ratio for the S&P 500. Divides current index price by the sum of the last 12 months of reported (GAAP) earnings. More volatile than CAPE — distorted during earnings collapses (2009, 2020). Long-run average ≈16–17×. ≥25× = stretched. ≥35× = extreme.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈16–17×</span><span><strong>Bubble threshold:</strong> ≥25×</span><span><strong>Historic high:</strong> 123× (2009, earnings collapse artifact)</span><span><strong>Data cadence:</strong> Monthly · Near real-time</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">7%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="multpl.com · Monthly · Near real-time">–</td>
+        </tr>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">S&P 500 Price-to-Sales</span>
+              <span class="tooltip-box">S&P 500 market capitalisation divided by aggregate trailing 12-month revenues. Immune to earnings manipulation and margin compression — measures what investors pay per dollar of top-line revenue. Long-run median ≈1.6×. ≥2.5× = stretched. ≥3.5× = extreme. All-time high: ≈3.7× (2021–2026).<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈1.6×</span><span><strong>Bubble threshold:</strong> ≥2.5×</span><span><strong>Historic high:</strong> ≈3.7× (2021–2026)</span><span><strong>Data cadence:</strong> Monthly · Near real-time</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">7%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="multpl.com · Monthly · Near real-time">–</td>
+        </tr>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Excess CAPE Yield (ECY)</span>
+              <span class="tooltip-box">Earnings yield of the S&P 500 (1÷CAPE) minus the US 10-year Treasury yield. Measures the risk premium investors earn for holding equities over risk-free bonds. Thin or negative ECY = equities offer little compensation for their risk. Long-run average ≈2.7%. ≤1.5% = stretched. ≤0% = extreme.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈2.7%</span><span><strong>Bubble threshold:</strong> ≤1.5%</span><span><strong>Historic high:</strong> ≈6% (1980s, when yields were very high)</span><span><strong>Data cadence:</strong> Daily · Near real-time</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">9%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="Calculated · Daily · Near real-time">–</td>
+        </tr>
+        
+        <tr style="background:#f0fdf4;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">FINRA Margin Debt (YoY%)</span>
+              <span class="tooltip-box">Year-on-year percentage change in total margin debt (debit balances in margin accounts) as reported by FINRA. Rising margin debt signals increasing leverage and speculative appetite. Rapid YoY increases of ≥30% have historically preceded corrections. Published monthly with ~45-day lag. Negative readings indicate deleveraging.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈0% YoY</span><span><strong>Bubble threshold:</strong> ≥+30% YoY</span><span><strong>Historic high:</strong> ≈+75% YoY (early 2021)</span><span><strong>Data cadence:</strong> Monthly · ~45 day lag</span></div></span>
+            </span>
+            
+          </td>
+          <td class="ind-weight">12%</td>
+          <td class="ind-value-cell"><span class="val-main">-22.2%</span> <span class="val-avg">Avg: 0%</span> <span class="val-ctx" style="color:#22c55e;">Contracting</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:12%; background:#22c55e;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#22c55e; font-weight:700;">1.3</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#22c55e20; color:#22c55e; border:1px solid #22c55e40;">LOW</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="FINRA Margin Statistics (YoY % change in debit balances) · Monthly · ~45 day lag">1997-01</td>
+        </tr>
+        
+        <tr style="background:#fefce8;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Household Equity Allocation</span>
+              <span class="tooltip-box">Percentage of total household financial assets held in corporate equities and mutual funds, from the Federal Reserve Z.1 Flow of Funds report. A favourite long-run indicator of Buffett's. Peaks in household equity exposure have historically coincided with market tops. Long-run average ≈45%. ≥60% = extreme. Published quarterly with ~75-day lag.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈45%</span><span><strong>Bubble threshold:</strong> ≥60%</span><span><strong>Historic high:</strong> ≈67% (Q1 2022)</span><span><strong>Data cadence:</strong> Quarterly · ~75 day lag (Fed Z.1 report)</span></div></span>
+            </span>
+            
+          </td>
+          <td class="ind-weight">13%</td>
+          <td class="ind-value-cell"><span class="val-main">45.8%</span> <span class="val-avg">Avg: 45%</span> <span class="val-ctx" style="color:#eab308;">Normal</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:51%; background:#eab308;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#eab308; font-weight:700;">5.2</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="FRED Z.1 Flow of Funds (BOGZ1FL153064486Q) · Quarterly · ~75 day lag (Fed Z.1 report)">2026-01-01</td>
+        </tr>
+        
+        <tr style="background:#f9fafb;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Chicago Fed NFCI</span>
+              <span class="tooltip-box">National Financial Conditions Index. Measures the overall tightness or looseness of US financial conditions across money markets, debt markets, and equity markets. 0 = neutral (historical average). Negative = loose conditions (accommodative, risk-on). Positive = tight conditions (restrictive, risk-off). ≤−0.4 = very loose — historically associated with elevated speculation.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> 0 (neutral)</span><span><strong>Bubble threshold:</strong> ≤−0.4 (very loose)</span><span><strong>Historic high:</strong> 2.6 (2008 crisis, extreme tightness)</span><span><strong>Data cadence:</strong> Weekly · ~7 day lag</span></div></span>
+            </span>
+            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+          </td>
+          <td class="ind-weight">8%</td>
+          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="Chicago Fed NFCI · Weekly · ~7 day lag">–</td>
+        </tr>
+        
+        <tr style="background:#fff7ed;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">VIX (CBOE Volatility Index)</span>
+              <span class="tooltip-box">The CBOE Volatility Index — measures market expectations of near-term S&P 500 volatility implied by options prices. Often called the 'fear gauge'. Low VIX = complacency/euphoria. High VIX = fear/panic. <12 = extreme complacency. 12–20 = normal. 20–30 = elevated fear. >30 = crisis.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈20</span><span><strong>Bubble threshold:</strong> ≤12 (extreme complacency)</span><span><strong>Historic high:</strong> 89.5 (Oct 2008)</span><span><strong>Data cadence:</strong> Daily · Real-time</span></div></span>
+            </span>
+            
+          </td>
+          <td class="ind-weight">5%</td>
+          <td class="ind-value-cell"><span class="val-main">17.7</span> <span class="val-avg">Avg: 20</span> <span class="val-ctx" style="color:#eab308;">Calm</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:61%; background:#f97316;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#f97316; font-weight:700;">6.2</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#f9731620; color:#f97316; border:1px solid #f9731640;">ELEVATED</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="CBOE VIX via Yahoo Finance · Daily · Real-time">2026-06-12</td>
+        </tr>
+        
+        <tr style="background:#f0fdf4;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">CNN Fear & Greed Index</span>
+              <span class="tooltip-box">CNN's composite sentiment index measuring seven market indicators: stock price momentum, stock price breadth, put/call ratio, market volatility, junk bond demand, safe haven demand, and stock price strength. Scale 0–100. 0–24 = Extreme Fear. 25–44 = Fear. 45–55 = Neutral. 56–74 = Greed. 75–100 = Extreme Greed.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈50</span><span><strong>Bubble threshold:</strong> ≥75 (Extreme Greed)</span><span><strong>Historic high:</strong> ≈97 (2021)</span><span><strong>Data cadence:</strong> Daily · Real-time</span></div></span>
+            </span>
+            
+          </td>
+          <td class="ind-weight">7%</td>
+          <td class="ind-value-cell"><span class="val-main">34/100</span> <span class="val-avg">Avg: 50</span> <span class="val-ctx" style="color:#22c55e;">Fear</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:34%; background:#22c55e;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#22c55e; font-weight:700;">3.4</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#22c55e20; color:#22c55e; border:1px solid #22c55e40;">LOW</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="CNN Fear & Greed Index (dataviz API) · Daily · Real-time">2026-06-12</td>
+        </tr>
+        
+        <tr style="background:#fefce8;">
+          <td class="ind-name">
+            <span class="tooltip-wrap">
+              <span class="ind-label" tabindex="0">Insider Sell:Buy Ratio</span>
+              <span class="tooltip-box">Ratio of insider sell transactions to insider buy transactions over the prior 30 days, sourced from SEC Form 4 filings via OpenInsider.com. Insiders — directors, officers, and 10%+ shareholders — must file within 2 business days of any trade. Heavy selling relative to buying signals that those with the best information view their stock as expensive. >3× = elevated selling. >5× = extreme.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈1× (balanced)</span><span><strong>Bubble threshold:</strong> ≥3× (heavy insider selling)</span><span><strong>Historic high:</strong> ≥10× (near market peaks)</span><span><strong>Data cadence:</strong> Rolling 30 days · ~2 week lag</span></div></span>
+            </span>
+            
+          </td>
+          <td class="ind-weight">5%</td>
+          <td class="ind-value-cell"><span class="val-main">1.0×</span> <span class="val-avg">Avg: 1.0×</span> <span class="val-ctx" style="color:#eab308;">Normal</span></td>
+          <td class="ind-bar">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:50%; background:#eab308;"></div>
+            </div>
+          </td>
+          <td class="ind-score" style="color:#eab308; font-weight:700;">5.0</td>
+          <td class="ind-status">
+            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
+          </td>
+          <td class="ind-spark"></td>
+          <td class="ind-source" title="OpenInsider.com (Form 4, last 30 days, sell:buy ratio) · Rolling 30 days · ~2 week lag">2026-06-13</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    <div class="scale-legend">
+      <span style="font-size:10px; color:#94a3b8; font-weight:600;">SCORE SCALE:</span>
+      <span class="scale-item"><span class="scale-dot" style="background:#22c55e;"></span>0–3.5 &nbsp;Low / Value</span>
+      <span class="scale-item"><span class="scale-dot" style="background:#eab308;"></span>3.5–5.5 &nbsp;Neutral</span>
+      <span class="scale-item"><span class="scale-dot" style="background:#f97316;"></span>5.5–7.5 &nbsp;Elevated</span>
+      <span class="scale-item"><span class="scale-dot" style="background:#ef4444;"></span>7.5–10 &nbsp;Extreme</span>
+    </div>
+  </div>
+</div>
+
+
+
+</div><!-- /main -->
+
+<div class="footer">
+  Market Euphoria Monitor &nbsp;·&nbsp; Built for Gustav Holtzhausen &nbsp;·&nbsp; github.com/gustavholtzhausen/euphoria-dashboard<br>
+  Data: FRED, CBOE, CNN, FINRA, multpl.com, OpenInsider, Conference Board. Not financial advice.
+</div>
+
+<script>
+  function toggleTable() {
+    var body  = document.getElementById('ind-table-body');
+    var arrow = document.getElementById('collapse-arrow');
+    var isOpen = body.classList.contains('open');
+    if (isOpen) {
+      body.classList.remove('open');
+      arrow.classList.remove('open');
+    } else {
+      body.classList.add('open');
+      arrow.classList.add('open');
+    }
+  }
+
+  function toggleSigRef() {
+    var body  = document.getElementById('sig-ref-body');
+    var arrow = document.getElementById('sig-ref-arrow');
+    var isOpen = body.classList.contains('open');
+    if (isOpen) {
+      body.classList.remove('open');
+      arrow.classList.remove('open');
+    } else {
+      body.classList.add('open');
+      arrow.classList.add('open');
+    }
+  }
+</script>
+
+</body>
+</html>
