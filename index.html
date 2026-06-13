@@ -199,17 +199,17 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <h1>⚡ Market Euphoria Monitor</h1>
-  <div class="meta">Updated: 13 June 2026 &nbsp;|&nbsp; gustavholtzhausen.github.io/euphoria-dashboard &nbsp;|&nbsp; Data coverage: 86%</div>
+  <div class="meta">Updated: 13 June 2026 &nbsp;|&nbsp; gustavholtzhausen.github.io/euphoria-dashboard &nbsp;|&nbsp; Data coverage: 100%</div>
 </div>
 
 <div class="main">
 
 <!-- 1. SIGNAL BANNER -->
-<div class="signal-banner" style="background:#991b1b18; border-color:#991b1b; color:#991b1b;">
-  <div class="signal-emoji">⛔</div>
+<div class="signal-banner" style="background:#ef444418; border-color:#ef4444; color:#ef4444;">
+  <div class="signal-emoji">🔴</div>
   <div style="flex:1;">
-    <div class="signal-label">EXTREME RISK</div>
-    <div class="signal-posture" style="color:#991b1bcc;">Structural bubble conditions — consider hedging</div>
+    <div class="signal-label">REDUCE</div>
+    <div class="signal-posture" style="color:#ef4444cc;">Trim on strength — raise cash reserve above baseline</div>
     <!-- Collapsible signal reference inside banner -->
     <div class="sig-ref-toggle" onclick="toggleSigRef()" id="sig-ref-btn">
       Signal Reference <span class="sig-ref-arrow" id="sig-ref-arrow">▼</span>
@@ -246,12 +246,12 @@
       <text x="14"  y="130" font-size="8" fill="#22c55e" font-family="Arial">0</text>
       <text x="98"  y="22"  font-size="8" fill="#eab308" font-family="Arial" text-anchor="middle">50</text>
       <text x="200" y="130" font-size="8" fill="#ef4444" font-family="Arial" text-anchor="end">100</text>
-      <line x1="110" y1="115" x2="169.4" y2="69.2" stroke="#991b1b" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="110" cy="115" r="5" fill="#991b1b"/>
-      <text x="110" y="100" font-size="28" font-weight="bold" fill="#991b1b" font-family="Arial" text-anchor="middle">79</text>
+      <line x1="110" y1="115" x2="155.0" y2="55.0" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="110" cy="115" r="5" fill="#ef4444"/>
+      <text x="110" y="100" font-size="28" font-weight="bold" fill="#ef4444" font-family="Arial" text-anchor="middle">70</text>
     </svg>
-    <div class="gauge-label">/100 — EXTREME RISK</div>
-    <div class="vs-mean">vs your 1-month avg of <strong>79.1</strong>: <span style="color:#22c55e;">+0.0 pts</span></div>
+    <div class="gauge-label">/100 — REDUCE</div>
+    <div class="vs-mean">vs your 1-month avg of <strong>70.5</strong>: <span style="color:#22c55e;">+0.0 pts</span></div>
   </div>
 
   <div class="breakdown-card">
@@ -263,25 +263,25 @@
         <div class="mc-score" style="color:#ef4444;">10.0</div>
         <div class="mc-raw"><span style="color:#94a3b8;">245.5%</span><span style="color:#64748b;"> · Avg: 100% · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
       </div>
-      <div class="mini-card" style="border-left-color:#ef4444;">
+      <div class="mini-card" style="border-left-color:#eab308;">
         <div class="mc-name">CAPE (P/E10)</div>
-        <div class="mc-score" style="color:#ef4444;">9.5</div>
-        <div class="mc-raw"><span style="color:#94a3b8;">41.4×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
-      </div>
-      <div class="mini-card" style="border-left-color:#9ca3af;">
-        <div class="mc-name">TTM P/E</div>
-        <div class="mc-score" style="color:#9ca3af;">–</div>
-        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
-      </div>
-      <div class="mini-card" style="border-left-color:#9ca3af;">
-        <div class="mc-name">Price-to-Sales</div>
-        <div class="mc-score" style="color:#9ca3af;">–</div>
-        <div class="mc-raw"><span style="color:#64748b;">–</span></div>
+        <div class="mc-score" style="color:#eab308;">4.4</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">16.1×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#eab308; font-weight:700;">Fair</span></div>
       </div>
       <div class="mini-card" style="border-left-color:#ef4444;">
+        <div class="mc-name">TTM P/E</div>
+        <div class="mc-score" style="color:#ef4444;">7.7</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">32.0×</span><span style="color:#64748b;"> · Avg: 17.0× · </span><span style="color:#f97316; font-weight:700;">Elevated</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#ef4444;">
+        <div class="mc-name">Price-to-Sales</div>
+        <div class="mc-score" style="color:#ef4444;">9.2</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">3.35×</span><span style="color:#64748b;"> · Avg: 1.6× · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
+      </div>
+      <div class="mini-card" style="border-left-color:#f97316;">
         <div class="mc-name">Excess CAPE Yield (ECY)</div>
-        <div class="mc-score" style="color:#ef4444;">10.0</div>
-        <div class="mc-raw"><span style="color:#94a3b8;">-2.04%</span><span style="color:#64748b;"> · Avg: 3% · </span><span style="color:#ef4444; font-weight:700;">Extreme</span></div>
+        <div class="mc-score" style="color:#f97316;">6.5</div>
+        <div class="mc-raw"><span style="color:#94a3b8;">1.76%</span><span style="color:#64748b;"> · Avg: 3% · </span><span style="color:#eab308; font-weight:700;">Fair</span></div>
       </div>
       <div class="mini-card" style="border-left-color:#ef4444;">
         <div class="mc-name">Margin Debt (YoY%)</div>
@@ -368,7 +368,7 @@
   <div class="collapsible-header" onclick="toggleTable()" id="ind-toggle-header">
     <h2>Euphoria Indicators — Scored &amp; Weighted</h2>
     <div class="right">
-      <span class="coverage-badge">Weight coverage: 86% &nbsp;·&nbsp; Hover indicator name for definition</span>
+      <span class="coverage-badge">Weight coverage: 100% &nbsp;·&nbsp; Hover indicator name for definition</span>
       <span class="collapse-arrow" id="collapse-arrow">▼</span>
     </div>
   </div>
@@ -416,7 +416,7 @@
           <td class="ind-source" title="Calculated: yfinance ^W5000 × 1.05B / FRED GDP (GDP as of 2026-01-01) · Monthly · ~30 day lag">2026-06-12</td>
         </tr>
         
-        <tr style="background:#fef2f2;">
+        <tr style="background:#fefce8;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">Shiller CAPE (P/E10)</span>
@@ -425,67 +425,67 @@
             
           </td>
           <td class="ind-weight">12%</td>
-          <td class="ind-value-cell"><span class="val-main">41.4×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#ef4444;">Extreme</span></td>
+          <td class="ind-value-cell"><span class="val-main">16.1×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#eab308;">Fair</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:95%; background:#ef4444;"></div>
+              <div class="bar-fill" style="width:43%; background:#eab308;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#ef4444; font-weight:700;">9.5</td>
+          <td class="ind-score" style="color:#eab308; font-weight:700;">4.4</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
+            <span class="status-pill" style="background:#eab30820; color:#eab308; border:1px solid #eab30840;">NEUTRAL</span>
           </td>
           <td class="ind-spark"></td>
           <td class="ind-source" title="multpl.com (Shiller PE) · Monthly · Near real-time">2026-06-13</td>
         </tr>
         
-        <tr style="background:#f9fafb;">
+        <tr style="background:#fef2f2;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">S&P 500 TTM P/E</span>
               <span class="tooltip-box">Trailing twelve-month price-to-earnings ratio for the S&P 500. Divides current index price by the sum of the last 12 months of reported (GAAP) earnings. More volatile than CAPE — distorted during earnings collapses (2009, 2020). Long-run average ≈16–17×. ≥25× = stretched. ≥35× = extreme.<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈16–17×</span><span><strong>Bubble threshold:</strong> ≥25×</span><span><strong>Historic high:</strong> 123× (2009, earnings collapse artifact)</span><span><strong>Data cadence:</strong> Monthly · Near real-time</span></div></span>
             </span>
-            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+            
           </td>
           <td class="ind-weight">7%</td>
-          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-value-cell"><span class="val-main">32.0×</span> <span class="val-avg">Avg: 17.0×</span> <span class="val-ctx" style="color:#f97316;">Elevated</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+              <div class="bar-fill" style="width:76%; background:#ef4444;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-score" style="color:#ef4444; font-weight:700;">7.7</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
           </td>
           <td class="ind-spark"></td>
-          <td class="ind-source" title="multpl.com · Monthly · Near real-time">–</td>
+          <td class="ind-source" title="multpl.com (S&P 500 PE TTM) · Monthly · Near real-time">2026-06-13</td>
         </tr>
         
-        <tr style="background:#f9fafb;">
+        <tr style="background:#fef2f2;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">S&P 500 Price-to-Sales</span>
               <span class="tooltip-box">S&P 500 market capitalisation divided by aggregate trailing 12-month revenues. Immune to earnings manipulation and margin compression — measures what investors pay per dollar of top-line revenue. Long-run median ≈1.6×. ≥2.5× = stretched. ≥3.5× = extreme. All-time high: ≈3.7× (2021–2026).<div class="tip-anchors"><span><strong>Long-run neutral:</strong> ≈1.6×</span><span><strong>Bubble threshold:</strong> ≥2.5×</span><span><strong>Historic high:</strong> ≈3.7× (2021–2026)</span><span><strong>Data cadence:</strong> Monthly · Near real-time</span></div></span>
             </span>
-            <span class="stale-badge" title="Live fetch failed — carrying forward last known value">STALE</span>
+            
           </td>
           <td class="ind-weight">7%</td>
-          <td class="ind-value-cell"><span class="val-main">–</span></td>
+          <td class="ind-value-cell"><span class="val-main">3.35×</span> <span class="val-avg">Avg: 1.6×</span> <span class="val-ctx" style="color:#ef4444;">Extreme</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:0%; background:#9ca3af;"></div>
+              <div class="bar-fill" style="width:91%; background:#ef4444;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#9ca3af; font-weight:700;">–</td>
+          <td class="ind-score" style="color:#ef4444; font-weight:700;">9.2</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#9ca3af20; color:#9ca3af; border:1px solid #9ca3af40;">NO DATA</span>
+            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
           </td>
           <td class="ind-spark"></td>
-          <td class="ind-source" title="multpl.com · Monthly · Near real-time">–</td>
+          <td class="ind-source" title="multpl.com (S&P 500 P/S) · Monthly · Near real-time">2026-06-13</td>
         </tr>
         
-        <tr style="background:#fef2f2;">
+        <tr style="background:#fff7ed;">
           <td class="ind-name">
             <span class="tooltip-wrap">
               <span class="ind-label" tabindex="0">Excess CAPE Yield (ECY)</span>
@@ -494,15 +494,15 @@
             
           </td>
           <td class="ind-weight">9%</td>
-          <td class="ind-value-cell"><span class="val-main">-2.04%</span> <span class="val-avg">Avg: 3%</span> <span class="val-ctx" style="color:#ef4444;">Extreme</span></td>
+          <td class="ind-value-cell"><span class="val-main">1.76%</span> <span class="val-avg">Avg: 3%</span> <span class="val-ctx" style="color:#eab308;">Fair</span></td>
           <td class="ind-bar">
             <div class="bar-track">
-              <div class="bar-fill" style="width:100%; background:#ef4444;"></div>
+              <div class="bar-fill" style="width:64%; background:#f97316;"></div>
             </div>
           </td>
-          <td class="ind-score" style="color:#ef4444; font-weight:700;">10.0</td>
+          <td class="ind-score" style="color:#f97316; font-weight:700;">6.5</td>
           <td class="ind-status">
-            <span class="status-pill" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440;">EXTREME</span>
+            <span class="status-pill" style="background:#f9731620; color:#f97316; border:1px solid #f9731640;">ELEVATED</span>
           </td>
           <td class="ind-spark"></td>
           <td class="ind-source" title="Calculated: (1/CAPE) − FRED API DGS10 · Daily · Near real-time">2026-06-11</td>
